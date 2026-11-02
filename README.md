@@ -33,34 +33,64 @@
 ## Установка и запуск
 
 1. Клонирование репозитория и создание виртуального окружения:
-```bash
-git clone https://github.com/LaughingFerret/Recipe-book.git
-cd Recipe-book
-python -m venv .venv
-source .venv/bin/activate  # Для Windows: .venv\Scripts\activate
+   `git clone https://github.com/LaughingFerret/Recipe-book.git`
+   `cd Recipe-book`
+   `python -m venv .venv`
+   `source .venv/bin/activate` (Для Windows: `.venv\Scripts\activate`)
 
-## Модель данных
-Схема базы данных спроектирована с учетом каскадных удалений и ограничений целостности:
+2. Установка зависимостей:
+   `pip install -e .`
 
-**IngredientCategory** — категории ингредиентов;
-**RecipeCategory** — категории рецептов;
-**Ingredient** — справочник ингредиентов (связан с категорией);
-**Operation** — справочник кулинарных операций;
-**Recipe** — основная сущность рецепта;
-**RecipeIngredient** — связующая таблица состава рецепта (содержит количество и единицы измерения);
-**RecipeStep** — шаги приготовления (связаны с операцией);
-**recipe_step_ingredients** — таблица связи "многие-ко-многим" для привязки ингредиентов к конкретным шагам.
+3. Инициализация базы данных и загрузка демонстрационных данных:
+   `python -m recipe_book seed`
+
+4. Запуск графического интерфейса:
+   `python -m recipe_book gui`
+
+## Использование CLI
+
+Справка по всем доступным командам:
+`python -m recipe_book --help`
+
+Основные сценарии работы:
+
+**Добавление данных**
+`python -m recipe_book category-add --kind recipe --name "Десерты"`
+`python -m recipe_book ingredient-add --name "Мука" --category "Крупы и макароны"`
+
+**Просмотр каталога**
+`python -m recipe_book recipes`
+`python -m recipe_book recipe-show 1`
+
+**Поиск**
+`python -m recipe_book search --query "суп" --max-time 40`
+`python -m recipe_book search --ingredient "Куриное филе" --ingredient "Сливки"`
+`python -m recipe_book search --ingredient "Тыква" --ingredient "Лосось" --any-ingredients`
 
 ## Архитектура проекта
+
 Код разделен на изолированные слои, что обеспечивает переиспользование бизнес-логики между CLI и GUI.
 
-recipe_book/
-├── models.py        # Декларативные модели SQLAlchemy
-├── repositories.py  # Слой доступа к данным (запросы)
-├── services.py      # Бизнес-логика, валидация входных данных
-├── schemas.py       # DTO (Data Transfer Objects) на базе dataclass
-├── db.py            # Настройка подключения, управление сессиями
-├── seed.py          # Генератор тестовых данных
-├── errors.py        # Иерархия исключений
-├── cli.py           # Точка входа CLI
-└── gui.py           # Точка входа GUI
+    recipe_book/
+    ├── models.py        # Декларативные модели SQLAlchemy
+    ├── repositories.py  # Слой доступа к данным (запросы)
+    ├── services.py      # Бизнес-логика, валидация входных данных
+    ├── schemas.py       # DTO (Data Transfer Objects) на базе dataclass
+    ├── db.py            # Настройка подключения, управление сессиями
+    ├── seed.py          # Генератор тестовых данных
+    ├── errors.py        # Иерархия исключений
+    ├── cli.py           # Точка входа CLI
+    └── gui.py           # Точка входа GUI
+
+## Модель данных
+
+Схема базы данных спроектирована с учетом каскадных удалений и ограничений целостности:
+
+- **IngredientCategory** — категории ингредиентов;
+- **RecipeCategory** — категории рецептов;
+- **Ingredient** — справочник ингредиентов (связан с категорией);
+- **Operation** — справочник кулинарных операций;
+- **Recipe** — основная сущность рецепта;
+- **RecipeIngredient** — связующая таблица состава рецепта (содержит количество и единицы измерения);
+- **RecipeStep** — шаги приготовления (связаны с операцией);
+- **recipe_step_ingredients** — таблица связи "многие-ко-многим" для привязки ингредиентов к конкретным шагам.
